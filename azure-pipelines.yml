@@ -7,11 +7,15 @@ variables:
   BUILD_DIR: '$(Build.ArtifactStagingDirectory)\Build'
   PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)\Package'
 
-pool: unrealengine
+pool: 
+  name: unrealengine
+  workspace: 
+    clean: outputs
+
 
 stages:
-- stage: pixel_streaming
-  displayName: Enable Pixel Streaming
+- stage: BuildCookPackage
+  displayName: Build, Cook and Package
   jobs:
   - job: enable_pixel_streaming
     steps:
