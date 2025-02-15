@@ -19,20 +19,9 @@ stages:
   jobs:
   - job: BuildJob
     steps:
-    - script: echo %UE_ROOT%
-    - script: echo %PROJECT_PATH%
-    - script: echo %BUILD_DIR%
-    - script: echo %PACKAGE_DIR%
-- stage: Test
-  jobs:
-  - job: TestOnWindows
-    steps:
-    - script: echo Testing on Windows!
-  - job: TestOnLinux
-    steps:
-    - script: echo Testing on Linux!
-- stage: Deploy
-  jobs:
-  - job: Deploy
-    steps:
-    - script: echo Deploying the code!
+    # --------------------------------------------
+    # Step 1: Enable Pixel Streaming Plugin
+    # --------------------------------------------
+    - script: |
+        "%UE_ROOT%\Engine\Binaries\DotNET\UnrealBuildTool.exe" -Mode=Json -PluginAction=Enable -Project="%PROJECT_PATH%" -Plugin="PixelStreaming"
+      displayName: 'Enable Pixel Streaming Plugin'
