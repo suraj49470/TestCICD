@@ -7,8 +7,7 @@ variables:
   BUILD_DIR: '$(Build.BinariesDirectory)'
   PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)/Package'
 
-pool:
-  name: unrealengine
+pool: unrealengine
 
 stages:
   - stage: BuildCookPackage
