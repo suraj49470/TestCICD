@@ -2,20 +2,20 @@ trigger:
   - master
 
 variables:
-  UE_ROOT: 'D:\UKHO\Unreal Engine\UE_5.3' # Confirm this path matches your installation
+  UE_ROOT: 'D:\UKHO\Unreal Engine\UE_5.3'
   PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
-  BUILD_DIR: '$(Build.ArtifactStagingDirectory)\Build'
-  PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)\Package'
+  BUILD_DIR: '$(Build.BinariesDirectory)'
+  PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)/Package'
 
 pool:
   name: unrealengine
 
 stages:
   - stage: BuildCookPackage
-    displayName: Build, Cook and Package
+    displayName: Build, Cook, and Package
     jobs:
       - job: build_project
-        displayName: "Build and ship Package"
+        displayName: "Build and Ship Package"
         steps:
           - script: |
               echo "Building Unreal Project..."
@@ -35,6 +35,7 @@ stages:
                 -archive ^
                 -archivedirectory="%BUILD_DIR%"
             displayName: Building the project
+
           - script: |
               echo "Packaging for Production..."
               "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
@@ -49,7 +50,15 @@ stages:
                 -archive ^
                 -archivedirectory="%PACKAGE_DIR%" ^
                 -skipcook
-            displayName: Building Shipping Package        
+            displayName: Building Shipping Package
+
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'drop'
+              publishLocation: 'Container'
+              StoreAsTar: true        
+
   - stage: DevDeploy
     dependsOn: BuildCookPackage
     displayName: "Deploy to Dev environment"
@@ -59,6 +68,7 @@ stages:
         steps:
           - script: |
               echo "Deploy to dev"
+
   - stage: QADeploy
     dependsOn: DevDeploy
     displayName: "Deploy to QA environment"
@@ -68,11 +78,12 @@ stages:
         steps:
           - script: |
               echo "Deploy to QA"
+
   - stage: ProdDeploy
     dependsOn: QADeploy
     displayName: "Deploy to Prod environment"
     jobs:
-      - job: DevDeploy
+      - job: ProdDeploy
         displayName: "Deploy to production"
         steps:
           - script: |
