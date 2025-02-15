@@ -17,7 +17,7 @@ stages:
         displayName: "Build and Ship Package"
         steps:
           - script: |
-              echo "Building Unreal Project..."
+              echo "Building Unreal Project...."
               "%UE_ROOT%\\Engine\\Build\\BatchFiles\\RunUAT.bat" BuildCookRun ^
                 -project="%PROJECT_PATH%" ^
                 -noP4 ^
@@ -45,7 +45,7 @@ stages:
                 -serverconfig=Shipping ^
                 -build ^
                 -stage ^
-                -pak ^
+                -pak ^ 
                 -archive ^
                 -archivedirectory="%PACKAGE_DIR%" ^
                 -skipcook
