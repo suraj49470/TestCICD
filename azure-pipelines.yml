@@ -36,6 +36,7 @@ stages:
                 -compressed ^
                 -archive ^
                 -archivedirectory="%BUILD_DIR%"
+            displayName: Building the project
       - job: build_shipping_package
         displayName: "Shipping Package"
         dependsOn: build_project
@@ -54,6 +55,7 @@ stages:
                 -archive ^
                 -archivedirectory="%PACKAGE_DIR%" ^
                 -skipcook
+            displayName: Building Shipping Package
   - stage: DevDeploy
     dependsOn: BuildCookPackage
     displayName: "Deploy to Dev environment"
