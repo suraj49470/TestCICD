@@ -6,6 +6,12 @@
 trigger:
 - master
 
+variables:
+  UE_ROOT: 'C:\Program Files\Epic Games\UE_5.5'  # Update this path
+  PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
+  BUILD_DIR: '$(Build.ArtifactStagingDirectory)\Build'
+  PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)\Package'
+
 pool: unrealengine
 
 stages:
@@ -13,7 +19,10 @@ stages:
   jobs:
   - job: BuildJob
     steps:
-    - script: echo Building!
+    - script: echo %UE_ROOT%
+    - script: echo %PROJECT_PATH%
+    - script: echo %BUILD_DIR%
+    - script: echo %PACKAGE_DIR%
 - stage: Test
   jobs:
   - job: TestOnWindows
