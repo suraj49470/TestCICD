@@ -19,7 +19,7 @@ stages:
       displayName: 'Install .net framework 8'
       inputs:
         packageType: 'runtime'
-        version: '8.0.x'
+        version: '6.0.x'
         includePreviewVersions: false
         
     - script: |
