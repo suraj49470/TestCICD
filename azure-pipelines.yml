@@ -21,5 +21,5 @@ stages:
         version: '8.0.x'
         includePreviewVersions: false
     - script: |
-        -  "%UE_ROOT%\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.exe" EnablePlugin -Project="%PROJECT_PATH%" -Plugin="PixelStreaming"
-      displayName: 'Enable Pixel Streaming Plugin'
+        %UE_ROOT%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%PROJECT_PATH%" -Run=EnablePlugin -PluginName=PixelStreaming
+        displayName: 'Enable Pixel Streaming Plugin'
