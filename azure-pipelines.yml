@@ -1,57 +1,80 @@
 trigger:
-- master
+  - master
 
 variables:
-  UE_ROOT: 'D:\UKHO\Unreal Engine\UE_5.3'  # Confirm this path matches your installation
+  UE_ROOT: 'D:\UKHO\Unreal Engine\UE_5.3' # Confirm this path matches your installation
   PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
   BUILD_DIR: '$(Build.ArtifactStagingDirectory)\Build'
   PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)\Package'
 
-pool: 
+pool:
   name: unrealengine
-  workspace: 
+  workspace:
     clean: outputs
-
-
+    
 stages:
-- stage: BuildCookPackage
-  displayName: Build, Cook and Package
-  jobs:
-  - job: enable_pixel_streaming
-    steps:
-    - script: |
-        echo "Building Unreal Project..."
-        "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
-          -project="%PROJECT_PATH%" ^
-          -noP4 ^
-          -platform=Win64 ^
-          -clientconfig=Development ^
-          -serverconfig=Development ^
-          -cook ^
-          -iterativecooking ^
-          -allmaps ^
-          -build ^
-          -stage ^
-          -pak ^
-          -compressed ^
-          -archive ^
-          -archivedirectory="%BUILD_DIR%"
-      displayName: 'Build Project'
-    - script: |
-        echo "Packaging for Production..."
-        "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
-          -project="%PROJECT_PATH%" ^
-          -noP4 ^
-          -platform=Win64 ^
-          -clientconfig=Shipping ^
-          -serverconfig=Shipping ^
-          -build ^
-          -stage ^
-          -pak ^
-          -archive ^
-          -archivedirectory="%PACKAGE_DIR%" ^
-          -skipcook
-      displayName: 'Package Project'
-
-  
-
+  - stage: BuildCookPackage
+    displayName: Build, Cook and Package
+    jobs:
+      - job: build_project
+        steps:
+          - script: |
+              echo "Building Unreal Project..."
+              "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
+                -project="%PROJECT_PATH%" ^
+                -noP4 ^
+                -platform=Win64 ^
+                -clientconfig=Development ^
+                -serverconfig=Development ^
+                -cook ^
+                -iterativecooking ^
+                -allmaps ^
+                -build ^
+                -stage ^
+                -pak ^
+                -compressed ^
+                -archive ^
+                -archivedirectory="%BUILD_DIR%"
+            displayName: "Build Project"
+      - job: build_shipping_package
+        dependsOn: build_project
+        steps:
+          - script: |
+              echo "Packaging for Production..."
+              "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
+                -project="%PROJECT_PATH%" ^
+                -noP4 ^
+                -platform=Win64 ^
+                -clientconfig=Shipping ^
+                -serverconfig=Shipping ^
+                -build ^
+                -stage ^
+                -pak ^
+                -archive ^
+                -archivedirectory="%PACKAGE_DIR%" ^
+                -skipcook
+            displayName: "Shipping Package"
+  - stage: DevDeploy
+    dependsOn: BuildCookPackage
+    displayName: "Deploy to Dev environment"
+    jobs:
+      - job: DevDeploy
+        steps:
+          - script: |
+              echo "Deploy to dev"
+  - stage: QADeploy
+    dependsOn: DevDeploy
+    displayName: "Deploy to QA environment"
+    jobs:
+      - job: QADeploy
+        steps:
+          - script: |
+              echo "Deploy to QA"
+  - stage: ProdDeploy
+    dependsOn: QADeploy
+    displayName: "Deploy to Prod environment"
+    jobs:
+      - job: DevDeploy
+        steps:
+          - script: |
+              echo "Deploy to production"
