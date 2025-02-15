@@ -29,5 +29,5 @@ stages:
       # Step 1: Enable Pixel Streaming Plugin
       # --------------------------------------------
     - script: |
-        "%UE_ROOT%\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.exe" -Mode=Json -PluginAction=Enable -Project="%PROJECT_PATH%" -Plugin="PixelStreaming"
+        "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" -Mode=Json -PluginAction=Enable -Project="%PROJECT_PATH%" -Plugin="PixelStreaming"
       displayName: 'Enable Pixel Streaming Plugin'
