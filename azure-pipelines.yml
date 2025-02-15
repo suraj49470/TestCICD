@@ -2,10 +2,10 @@ trigger:
   - master
 
 variables:
-  UE_ROOT: 'D:\\UKHO\\Unreal Engine\\UE_5.3'
-  PROJECT_PATH: '$(Build.SourcesDirectory)\\TestCICD.uproject'
+  UE_ROOT: 'D:/UKHO/Unreal Engine/UE_5.3'
+  PROJECT_PATH: '$(Build.SourcesDirectory)/TestCICD.uproject'
   BUILD_DIR: "$(Build.BinariesDirectory)"
-  PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)\\Package"
+  PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)/Package"
 
 pool: unrealengine
 
@@ -18,7 +18,7 @@ stages:
         steps:
           - script: |
               echo "Building Unreal Project...."
-              "%UE_ROOT%\\Engine\\Build\\BatchFiles\\RunUAT.bat" BuildCookRun ^
+              "%UE_ROOT%/Engine/Build/BatchFiles/RunUAT.bat" BuildCookRun ^
                 -project="%PROJECT_PATH%" ^
                 -noP4 ^
                 -platform=Win64 ^
@@ -37,7 +37,7 @@ stages:
 
           - script: |
               echo "Packaging for Production..."
-              "%UE_ROOT%\\Engine\\Build\\BatchFiles\\RunUAT.bat" BuildCookRun ^
+              "%UE_ROOT%/Engine/Build/BatchFiles/RunUAT.bat" BuildCookRun ^
                 -project="%PROJECT_PATH%" ^
                 -noP4 ^
                 -platform=Win64 ^
@@ -56,14 +56,14 @@ stages:
 
           - task: ArchiveFiles@2
             inputs:
-              rootFolderOrFile: "$(PACKAGE_DIR)\\Windows\\" # Adjust based on actual output
+              rootFolderOrFile: "$(PACKAGE_DIR)/Windows" # Adjust based on actual output
               archiveType: "zip"
-              archiveFile: "$(Build.ArtifactStagingDirectory)\\drop.zip"
+              archiveFile: "$(Build.ArtifactStagingDirectory)/drop.zip"
               replaceExistingArchive: true
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)\\drop.zip"
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)/drop.zip"
               ArtifactName: "drop"
               publishLocation: "Container"
   - stage: DevDeploy
