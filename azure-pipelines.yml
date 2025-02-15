@@ -61,6 +61,7 @@ stages:
     displayName: "Deploy to Dev environment"
     jobs:
       - job: DevDeploy
+        displayName: "Deploy to dev"
         steps:
           - script: |
               echo "Deploy to dev"
@@ -69,6 +70,7 @@ stages:
     displayName: "Deploy to QA environment"
     jobs:
       - job: QADeploy
+        displayName: "Deploy to QA"
         steps:
           - script: |
               echo "Deploy to QA"
@@ -77,6 +79,7 @@ stages:
     displayName: "Deploy to Prod environment"
     jobs:
       - job: DevDeploy
+        displayName: "Deploy to production"
         steps:
           - script: |
               echo "Deploy to production"
