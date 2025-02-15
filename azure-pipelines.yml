@@ -41,14 +41,13 @@ stages:
           -platform=Win64 ^
           -clientconfig=Shipping ^
           -serverconfig=Shipping ^
-          -cook ^
-          -iterativecooking ^
-          -allmaps ^
+          -build ^
           -stage ^
           -pak ^
-          -compressed ^
           -archive ^
-          -archivedirectory="%PACKAGE_DIR%"
+          -archivedirectory="%PACKAGE_DIR%" ^
+          -skipcook
       displayName: 'Package Project'
+
   
 
