@@ -1,13 +1,8 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
 variables:
-  UE_ROOT: 'C:\Program Files\Epic Games\UE_5.5'  # Update this path
+  UE_ROOT: 'C:\Program Files\Epic Games\UE_5.5'  # Update this path if needed
   PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
   BUILD_DIR: '$(Build.ArtifactStagingDirectory)\Build'
   PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)\Package'
@@ -16,7 +11,7 @@ pool: unrealengine
 
 stages:
 - stage: pixel_streaming
-  displayName: Enable pixel Streaming
+  displayName: Enable Pixel Streaming
   jobs:
   - job: BuildJob
     steps:
@@ -25,9 +20,6 @@ stages:
         packageType: 'runtime'
         version: '8.0.x'
         includePreviewVersions: false
-      # --------------------------------------------
-      # Step 1: Enable Pixel Streaming Plugin
-      # --------------------------------------------
     - script: |
-        "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" -Mode=Json -PluginAction=Enable -Project="%PROJECT_PATH%" -Plugin="PixelStreaming"
+        "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" EnablePlugin -Project="%PROJECT_PATH%" -Plugin="PixelStreaming"
       displayName: 'Enable Pixel Streaming Plugin'
