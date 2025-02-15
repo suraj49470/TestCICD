@@ -4,8 +4,8 @@ trigger:
 variables:
   UE_ROOT: 'D:\UKHO\Unreal Engine\UE_5.3'
   PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
-  BUILD_DIR: '$(Build.BinariesDirectory)'
-  PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)/Package'
+  BUILD_DIR: "$(Build.BinariesDirectory)"
+  PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)\Package"
 
 pool: unrealengine
 
@@ -51,12 +51,18 @@ stages:
                 -skipcook
             displayName: Building Shipping Package
 
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(PACKAGE_DIR)\Windows\' # Adjust based on output
+              archiveType: "zip"
+              archiveFile: '$(Build.ArtifactStagingDirectory)\drop.zip'
+              replaceExistingArchive: true
+
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)/package/Windows/'
-              ArtifactName: 'drop'
-              publishLocation: 'Container'
-              StoreAsTar: true        
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)/drop.zip"
+              ArtifactName: "drop"
+              publishLocation: "Container"
 
   - stage: DevDeploy
     dependsOn: BuildCookPackage
