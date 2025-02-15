@@ -11,12 +11,13 @@ pool:
   name: unrealengine
   workspace:
     clean: outputs
-    
+
 stages:
   - stage: BuildCookPackage
     displayName: Build, Cook and Package
     jobs:
       - job: build_project
+        displayName: "Build Project"
         steps:
           - script: |
               echo "Building Unreal Project..."
@@ -35,8 +36,8 @@ stages:
                 -compressed ^
                 -archive ^
                 -archivedirectory="%BUILD_DIR%"
-            displayName: "Build Project"
       - job: build_shipping_package
+        displayName: "Shipping Package"
         dependsOn: build_project
         steps:
           - script: |
@@ -53,7 +54,6 @@ stages:
                 -archive ^
                 -archivedirectory="%PACKAGE_DIR%" ^
                 -skipcook
-            displayName: "Shipping Package"
   - stage: DevDeploy
     dependsOn: BuildCookPackage
     displayName: "Deploy to Dev environment"
