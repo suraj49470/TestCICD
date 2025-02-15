@@ -9,8 +9,6 @@ variables:
 
 pool:
   name: unrealengine
-  workspace:
-    clean: outputs
 
 stages:
   - stage: BuildCookPackage
