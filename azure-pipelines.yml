@@ -17,7 +17,7 @@ stages:
     displayName: Build, Cook and Package
     jobs:
       - job: build_project
-        displayName: "Build Project"
+        displayName: "Build and ship Package"
         steps:
           - script: |
               echo "Building Unreal Project..."
@@ -37,10 +37,6 @@ stages:
                 -archive ^
                 -archivedirectory="%BUILD_DIR%"
             displayName: Building the project
-      - job: build_shipping_package
-        displayName: "Shipping Package"
-        dependsOn: build_project
-        steps:
           - script: |
               echo "Packaging for Production..."
               "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
@@ -55,7 +51,7 @@ stages:
                 -archive ^
                 -archivedirectory="%PACKAGE_DIR%" ^
                 -skipcook
-            displayName: Building Shipping Package
+            displayName: Building Shipping Package        
   - stage: DevDeploy
     dependsOn: BuildCookPackage
     displayName: "Deploy to Dev environment"
