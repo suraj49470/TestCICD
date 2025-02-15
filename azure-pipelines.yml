@@ -51,18 +51,18 @@ stages:
                 -skipcook
             displayName: Building Shipping Package
 
-          # - task: ArchiveFiles@2
-          #   inputs:
-          #     rootFolderOrFile: '$(PACKAGE_DIR)\Windows\' # Adjust based on output
-          #     archiveType: "zip"
-          #     archiveFile: '$(Build.ArtifactStagingDirectory)\drop.zip'
-          #     replaceExistingArchive: true
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(PACKAGE_DIR)\Windows\' # Adjust based on output
+              archiveType: "zip"
+              archiveFile: '$(Build.ArtifactStagingDirectory)\drop.zip'
+              replaceExistingArchive: true
 
-          # - task: PublishBuildArtifacts@1
-          #   inputs:
-          #     PathtoPublish: "$(Build.ArtifactStagingDirectory)/drop.zip"
-          #     ArtifactName: "drop"
-          #     publishLocation: "Container"
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)\\drop.zip"
+              ArtifactName: "drop"
+              publishLocation: "Container"
 
   - stage: DevDeploy
     dependsOn: BuildCookPackage
