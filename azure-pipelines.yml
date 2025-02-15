@@ -15,13 +15,19 @@ variables:
 pool: unrealengine
 
 stages:
-- stage: Build
+- stage: pixel_streaming
+  displayName: Enable pixel Streaming
   jobs:
   - job: BuildJob
     steps:
-    # --------------------------------------------
-    # Step 1: Enable Pixel Streaming Plugin
-    # --------------------------------------------
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'runtime'
+        version: '8.0.x'
+        includePreviewVersions: false
+      # --------------------------------------------
+      # Step 1: Enable Pixel Streaming Plugin
+      # --------------------------------------------
     - script: |
         "%UE_ROOT%\Engine\Binaries\DotNET\UnrealBuildTool\UnrealBuildTool.exe" -Mode=Json -PluginAction=Enable -Project="%PROJECT_PATH%" -Plugin="PixelStreaming"
       displayName: 'Enable Pixel Streaming Plugin'
