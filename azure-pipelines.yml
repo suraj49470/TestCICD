@@ -2,7 +2,7 @@ trigger:
 - master
 
 variables:
-  UE_ROOT: 'C:\Program Files\Epic Games\UE_5.5'  # Update this path if needed
+  UE_ROOT: 'C:\Program Files\Epic Games\UE_5.5'  # Confirm this path matches your installation
   PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
   BUILD_DIR: '$(Build.ArtifactStagingDirectory)\Build'
   PACKAGE_DIR: '$(Build.ArtifactStagingDirectory)\Package'
@@ -20,6 +20,20 @@ stages:
         packageType: 'runtime'
         version: '8.0.x'
         includePreviewVersions: false
+        
     - script: |
-        %UE_ROOT%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%PROJECT_PATH%" -Run=EnablePlugin -PluginName=PixelStreaming
-        displayName: 'Enable Pixel Streaming Plugin'
+        "%UE_ROOT%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%PROJECT_PATH%" -Run=EnablePlugin -PluginName=PixelStreaming -BuildMachine
+        echo ##vso[task.setvariable variable=EnablePluginResult]%ERRORLEVEL%
+      displayName: 'Enable Pixel Streaming Plugin'
+      name: EnablePluginStep
+
+    - script: |
+        if %EnablePluginResult% neq 0 (
+          echo Failed to enable Pixel Streaming plugin
+          exit 1
+        )
+      displayName: 'Check Plugin Enable Result'
+
+    - script: |
+        "%UE_ROOT%\Engine\Build\BatchFiles\GenerateProjectFiles.bat" -project="%PROJECT_PATH%" -game -engine
+      displayName: 'Regenerate Project Files'
