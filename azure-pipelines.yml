@@ -22,18 +22,11 @@ stages:
         includePreviewVersions: false
         
     - script: |
-        "%UE_ROOT%\Engine\Binaries\Win64\UnrealEditor-Cmd.exe" "%PROJECT_PATH%" -Run=EnablePlugin -PluginName=PixelStreaming -BuildMachine
-        echo ##vso[task.setvariable variable=EnablePluginResult]%ERRORLEVEL%
+        "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
+          -project="%PROJECT_PATH%" ^
+          -noP4 ^
+          -platform=Win64 ^
+          -clientconfig=Shipping ^
+          -build
       displayName: 'Enable Pixel Streaming Plugin'
       name: EnablePluginStep
-
-    - script: |
-        if %EnablePluginResult% neq 0 (
-          echo Failed to enable Pixel Streaming plugin
-          exit 1
-        )
-      displayName: 'Check Plugin Enable Result'
-
-    - script: |
-        "%UE_ROOT%\Engine\Build\BatchFiles\GenerateProjectFiles.bat" -project="%PROJECT_PATH%" -game -engine
-      displayName: 'Regenerate Project Files'
