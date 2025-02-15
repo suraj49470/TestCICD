@@ -53,7 +53,7 @@ stages:
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)/package/Windows/'
               ArtifactName: 'drop'
               publishLocation: 'Container'
               StoreAsTar: true        
