@@ -8,7 +8,6 @@ variables:
   PROJECT_NAME: "TestCICD"
   BUILD_DIR: "$(Build.BinariesDirectory)"
   PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)\Package"
-  DDC_CACHE_PATH: "$(Build.StagingDirectory)\\DDC"
 
 stages:
   - stage: BuildCookPackage
@@ -18,12 +17,6 @@ stages:
       - job: build_project
         displayName: "Build and Ship Package"
         steps:
-          # Restore Unreal Derived Data Cache (DDC) with hash-based key - CACHING UPDATED
-          - task: Cache@2
-            displayName: Restore Unreal Derived Data Cache (DDC)
-            inputs:
-              key: 'unreal-ddc | hashFiles("$(Build.SourcesDirectory)\TestCICD.uproject", "$(Build.SourcesDirectory)\Config\DefaultEngine.ini")'
-              path: "$(Build.SourcesDirectory)\\DerivedDataCache"
 
           - script: |
               echo "Building Unreal Project..."
@@ -44,13 +37,6 @@ stages:
                 -archivedirectory="%BUILD_DIR%" ^
                 -ddc=DerivedDataCache # CACHING ADDED
             displayName: Building the project
-
-          # Save Unreal Derived Data Cache (DDC) - CACHING UPDATED
-          - task: Cache@2
-            displayName: Save Unreal Derived Data Cache (DDC)
-            inputs:
-              key: 'unreal-ddc | hashFiles("$(Build.SourcesDirectory)\TestCICD.uproject", "$(Build.SourcesDirectory)\Config\DefaultEngine.ini")'
-              path: "$(Build.SourcesDirectory)\\DerivedDataCache"
 
           - script: |
               echo "Packaging for Production..."
