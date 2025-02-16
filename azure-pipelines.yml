@@ -71,6 +71,8 @@ stages:
     jobs:
 
       - job: DevDeploy
+        workspace:
+          clean:  all
         displayName: "Deploy to dev"
         steps:
           - checkout: none
