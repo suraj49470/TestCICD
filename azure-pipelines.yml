@@ -76,7 +76,7 @@ stages:
               replaceExistingArchive: true
 
           - task: PublishBuildArtifacts@1
-            displayName: Upload Shipped package to artifacts
+            displayName: Upload Zipped scripts to artifacts
             inputs:
               PathtoPublish: "$(Build.ArtifactStagingDirectory)\\deployment_scripts.zip"
               ArtifactName: "drop"
@@ -95,12 +95,14 @@ stages:
         steps:
           - checkout: none
           - task: DownloadBuildArtifacts@0
+            displayName: Download Shipped Package
             inputs:
               buildType: "current"
               artifactName: "drop"
               downloadPath: "$(Build.ArtifactStagingDirectory)"
 
           - task: ExtractFiles@1
+            displayName: Extracting Package to "C:\\$(PROJECT_NAME)"
             inputs:
               archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\drop\\$(PROJECT_NAME).zip"
               destinationFolder: "C:\\$(PROJECT_NAME)"
@@ -108,8 +110,16 @@ stages:
               overwriteExistingFiles: true # Ensures old files are replaced
 
           - task: ExtractFiles@1
+            displayName: Extracting deployment scripts to "C:\\$(PROJECT_NAME)\\deployment_scripts"
             inputs:
               archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\drop\\deployment_scripts.zip"
               destinationFolder: "C:\\$(PROJECT_NAME)\\deployment_scripts"
               cleanDestinationFolder: false # This ensures the target folder is emptied before extraction
               overwriteExistingFiles: true # Ensures old files are replaced
+              
+          - task: PowerShell@2
+            displayName: Run Install-Runtimes.ps1
+            inputs:
+              targetType: filePath
+              filePath: C:\\$(PROJECT_NAME)\\deployment_scripts/Install-Runtimes.ps1
+              failOnStderr: true
