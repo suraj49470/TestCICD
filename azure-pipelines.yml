@@ -73,6 +73,7 @@ stages:
       - job: DevDeploy
         displayName: "Deploy to dev"
         steps:
+          - checkout: none
           - task: DownloadBuildArtifacts@0
             inputs:
               buildType: "current"
