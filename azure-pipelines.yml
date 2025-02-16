@@ -8,6 +8,7 @@ variables:
   PROJECT_NAME: "TestCICD"
   BUILD_DIR: "$(Build.BinariesDirectory)"
   PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)\Package"
+  DDC_CACHE_PATH: "$(Build.StagingDirectory)\\DDC"
 
 stages:
   - stage: BuildCookPackage
@@ -17,6 +18,13 @@ stages:
       - job: build_project
         displayName: "Build and Ship Package"
         steps:
+          # Restore Unreal Derived Data Cache (DDC) with hash-based key - CACHING UPDATED
+          - task: Cache@2
+            displayName: Restore Unreal Derived Data Cache (DDC)
+            inputs:
+              key: 'unreal-ddc | hashFiles("$(Build.SourcesDirectory)\TestCICD.uproject", "$(Build.SourcesDirectory)\Config\DefaultEngine.ini")'
+              path: "$(Build.SourcesDirectory)\\DerivedDataCache"
+
           - script: |
               echo "Building Unreal Project..."
               "%UE_ROOT%\Engine\Build\BatchFiles\RunUAT.bat" BuildCookRun ^
@@ -33,8 +41,16 @@ stages:
                 -pak ^
                 -compressed ^
                 -archive ^
-                -archivedirectory="%BUILD_DIR%"
+                -archivedirectory="%BUILD_DIR%" ^
+                -ddc=DerivedDataCache # CACHING ADDED
             displayName: Building the project
+
+          # Save Unreal Derived Data Cache (DDC) - CACHING UPDATED
+          - task: Cache@2
+            displayName: Save Unreal Derived Data Cache (DDC)
+            inputs:
+              key: 'unreal-ddc | hashFiles("$(Build.SourcesDirectory)\TestCICD.uproject", "$(Build.SourcesDirectory)\Config\DefaultEngine.ini")'
+              path: "$(Build.SourcesDirectory)\\DerivedDataCache"
 
           - script: |
               echo "Packaging for Production..."
@@ -87,7 +103,6 @@ stages:
     dependsOn: BuildCookPackage
     displayName: "Deploy to Dev environment"
     jobs:
-
       - job: DevDeploy
         workspace:
           clean:  all
@@ -106,20 +121,20 @@ stages:
             inputs:
               archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\drop\\$(PROJECT_NAME).zip"
               destinationFolder: "C:\\$(PROJECT_NAME)"
-              cleanDestinationFolder: true # This ensures the target folder is emptied before extraction
-              overwriteExistingFiles: true # Ensures old files are replaced
+              cleanDestinationFolder: true
+              overwriteExistingFiles: true
 
           - task: ExtractFiles@1
             displayName: Extracting deployment scripts to "C:\\$(PROJECT_NAME)\\deployment_scripts"
             inputs:
               archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\drop\\deployment_scripts.zip"
               destinationFolder: "C:\\$(PROJECT_NAME)\\deployment_scripts"
-              cleanDestinationFolder: false # This ensures the target folder is emptied before extraction
-              overwriteExistingFiles: true # Ensures old files are replaced
+              cleanDestinationFolder: false
+              overwriteExistingFiles: true
 
-          - task: PowerShell@2
-            displayName: Run Install-Runtimes.ps1
-            inputs:
-              targetType: filePath
-              filePath: C:\\$(PROJECT_NAME)\\deployment_scripts\\Install-Runtimes.ps1
-              failOnStderr: true
+          # - task: PowerShell@2
+          #   displayName: Run Install-Runtimes.ps1
+          #   inputs:
+          #     targetType: filePath
+          #     filePath: C:\\$(PROJECT_NAME)\\deployment_scripts\\Install-Runtimes.ps1
+          #     failOnStderr: true
