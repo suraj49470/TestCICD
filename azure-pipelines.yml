@@ -8,10 +8,9 @@ variables:
   BUILD_DIR: "$(Build.BinariesDirectory)"
   PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)\Package"
 
-pool: unrealengine
-
 stages:
   - stage: BuildCookPackage
+    pool: unrealengine
     displayName: Build, Cook, and Package
     jobs:
       - job: build_project
@@ -66,6 +65,7 @@ stages:
               publishLocation: "Container"
 
   - stage: DevDeploy
+    pool: unrealengine-dev
     dependsOn: BuildCookPackage
     displayName: "Deploy to Dev environment"
     jobs:
@@ -75,17 +75,17 @@ stages:
           - script: |
               echo "Deploy to dev"
 
-  - stage: QADeploy
-    dependsOn: DevDeploy
-    displayName: "Deploy to QA environment"
-    jobs:
-      - job: QADeploy
-        displayName: "Deploy to QA"
-        steps:
-          - script: |
-              echo "Deploy to QA"
+  # - stage: QADeploy
+  #   dependsOn: DevDeploy
+  #   displayName: "Deploy to QA environment"
+  #   jobs:
+  #     - job: QADeploy
+  #       displayName: "Deploy to QA"
+  #       steps:
+  #         - script: |
+  #             echo "Deploy to QA"
 
-  - stage: ProdDeploy
+  # - stage: ProdDeploy
     dependsOn: QADeploy
     displayName: "Deploy to Prod environment"
     jobs:
