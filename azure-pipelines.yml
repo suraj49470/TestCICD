@@ -56,12 +56,12 @@ stages:
             inputs:
               rootFolderOrFile: '$(PACKAGE_DIR)\Windows\' # Adjust based on output
               archiveType: "zip"
-              archiveFile: '$(Build.ArtifactStagingDirectory)\%PROJECT_NAME%.zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)\$(PROJECT_NAME).zip'
               replaceExistingArchive: true
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)\\%PROJECT_NAME%.zip"
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)\\$(PROJECT_NAME).zip"
               ArtifactName: "drop"
               publishLocation: "Container"
 
