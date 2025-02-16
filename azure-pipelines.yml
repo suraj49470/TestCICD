@@ -61,7 +61,7 @@ stages:
 
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "$(Build.ArtifactStagingDirectory)\\drop.zip"
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)\\%PROJECT_NAME%.zip"
               ArtifactName: "drop"
               publishLocation: "Container"
 
