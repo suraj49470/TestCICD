@@ -4,6 +4,7 @@ trigger:
 variables:
   UE_ROOT: 'D:\UKHO\Unreal Engine\UE_5.3'
   PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
+  DEPLOYMENT_SCRIPTS: '$(Build.SourcesDirectory)\deployment_scripts'
   PROJECT_NAME: "TestCICD"
   BUILD_DIR: "$(Build.BinariesDirectory)"
   PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)\Package"
@@ -52,6 +53,7 @@ stages:
             displayName: Building Shipping Package
 
           - task: ArchiveFiles@2
+            displayName: Zip shipped package
             inputs:
               rootFolderOrFile: '$(PACKAGE_DIR)\Windows\*' # Adjust based on output
               archiveType: "zip"
@@ -59,8 +61,24 @@ stages:
               replaceExistingArchive: true
 
           - task: PublishBuildArtifacts@1
+            displayName: Upload Shipped package to artifacts
             inputs:
               PathtoPublish: "$(Build.ArtifactStagingDirectory)\\$(PROJECT_NAME).zip"
+              ArtifactName: "drop"
+              publishLocation: "Container"
+
+          - task: ArchiveFiles@2
+            displayName: Zip Deployment scripts
+            inputs:
+              rootFolderOrFile: '$(DEPLOYMENT_SCRIPTS)\*' # Adjust based on output
+              archiveType: "zip"
+              archiveFile: '$(Build.ArtifactStagingDirectory)\deployment_scripts.zip'
+              replaceExistingArchive: true
+
+          - task: PublishBuildArtifacts@1
+            displayName: Upload Shipped package to artifacts
+            inputs:
+              PathtoPublish: "$(Build.ArtifactStagingDirectory)\\deployment_scripts.zip"
               ArtifactName: "drop"
               publishLocation: "Container"
 
@@ -87,4 +105,11 @@ stages:
               archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\drop\\$(PROJECT_NAME).zip"
               destinationFolder: "C:\\$(PROJECT_NAME)"
               cleanDestinationFolder: true # This ensures the target folder is emptied before extraction
+              overwriteExistingFiles: true # Ensures old files are replaced
+
+          - task: ExtractFiles@1
+            inputs:
+              archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\drop\\deployment_scripts.zip"
+              destinationFolder: "C:\\$(PROJECT_NAME)\\deployment_scripts"
+              cleanDestinationFolder: false # This ensures the target folder is emptied before extraction
               overwriteExistingFiles: true # Ensures old files are replaced
