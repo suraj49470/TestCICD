@@ -84,7 +84,7 @@ stages:
 
           - task: ExtractFiles@1
             inputs:
-              archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\$(PROJECT_NAME).zip"
+              archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\drop\\$(PROJECT_NAME).zip"
               destinationFolder: "C:\\$(PROJECT_NAME)"
               cleanDestinationFolder: true # This ensures the target folder is emptied before extraction
               overwriteExistingFiles: true # Ensures old files are replaced
