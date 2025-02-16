@@ -116,10 +116,10 @@ stages:
               destinationFolder: "C:\\$(PROJECT_NAME)\\deployment_scripts"
               cleanDestinationFolder: false # This ensures the target folder is emptied before extraction
               overwriteExistingFiles: true # Ensures old files are replaced
-              
+
           - task: PowerShell@2
             displayName: Run Install-Runtimes.ps1
             inputs:
               targetType: filePath
-              filePath: C:\\$(PROJECT_NAME)\\deployment_scripts/Install-Runtimes.ps1
+              filePath: C:\\$(PROJECT_NAME)\\deployment_scripts\\Install-Runtimes.ps1
               failOnStderr: true
