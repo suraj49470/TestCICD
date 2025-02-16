@@ -4,6 +4,7 @@ trigger:
 variables:
   UE_ROOT: 'D:\UKHO\Unreal Engine\UE_5.3'
   PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
+  PROJECT_NAME: 'TestCICD'
   BUILD_DIR: "$(Build.BinariesDirectory)"
   PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)\Package"
 
@@ -55,7 +56,7 @@ stages:
             inputs:
               rootFolderOrFile: '$(PACKAGE_DIR)\Windows\' # Adjust based on output
               archiveType: "zip"
-              archiveFile: '$(Build.ArtifactStagingDirectory)\drop.zip'
+              archiveFile: '$(Build.ArtifactStagingDirectory)\%PROJECT_NAME%.zip'
               replaceExistingArchive: true
 
           - task: PublishBuildArtifacts@1
