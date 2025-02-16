@@ -4,7 +4,7 @@ trigger:
 variables:
   UE_ROOT: 'D:\UKHO\Unreal Engine\UE_5.3'
   PROJECT_PATH: '$(Build.SourcesDirectory)\TestCICD.uproject'
-  PROJECT_NAME: 'TestCICD'
+  PROJECT_NAME: "TestCICD"
   BUILD_DIR: "$(Build.BinariesDirectory)"
   PACKAGE_DIR: "$(Build.ArtifactStagingDirectory)\Package"
 
@@ -69,8 +69,19 @@ stages:
     dependsOn: BuildCookPackage
     displayName: "Deploy to Dev environment"
     jobs:
+
       - job: DevDeploy
         displayName: "Deploy to dev"
         steps:
-          - script: |
-              echo "Deploy to dev"
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: "current"
+              artifactName: "drop"
+              downloadPath: "$(Build.ArtifactStagingDirectory)"
+
+          - task: ExtractFiles@1
+            inputs:
+              archiveFilePatterns: "$(Build.ArtifactStagingDirectory)\\$(PROJECT_NAME).zip"
+              destinationFolder: "C:\\$(PROJECT_NAME)"
+              cleanDestinationFolder: true # This ensures the target folder is emptied before extraction
+              overwriteExistingFiles: true # Ensures old files are replaced
