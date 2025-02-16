@@ -74,23 +74,3 @@ stages:
         steps:
           - script: |
               echo "Deploy to dev"
-
-  # - stage: QADeploy
-  #   dependsOn: DevDeploy
-  #   displayName: "Deploy to QA environment"
-  #   jobs:
-  #     - job: QADeploy
-  #       displayName: "Deploy to QA"
-  #       steps:
-  #         - script: |
-  #             echo "Deploy to QA"
-
-  # - stage: ProdDeploy
-    dependsOn: QADeploy
-    displayName: "Deploy to Prod environment"
-    jobs:
-      - job: ProdDeploy
-        displayName: "Deploy to production"
-        steps:
-          - script: |
-              echo "Deploy to production"
